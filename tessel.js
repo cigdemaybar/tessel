@@ -21,25 +21,18 @@ servo.on('ready', function () {
     var position = 0; //  Target position of the servo between 0 (min) and 1 (max).
     rfid.on('ready', function (version) {
         console.log('Ready to read card');
+        var state = 0;
         rfid.on('data', function (card) {
             console.log('Read card');
             servo.configure(servo1, 0.05, 0.12, function () {
-                var doit = setInterval(function () {
-                    //  Set servo #1 to position pos.
-                    servo.move(servo1, position);
-                    // Increment by 10% (~18 deg for a normal servo)
-                    position += 0.99;
-                    if (position > 1) {
-                        position = 0; // Reset servo position
-                    }
-                    // position++;
-                    // setTimeout(function () {
-                    //     // Wait for UPS wonderful person to put in parcel.
-                    // }, 1000);
-                    // position = 0;
-                }, 1000);
-                setTimeout(function () { clearInterval(doit) }, 2000);
-                // Every 500 milliseconds
+                servo.move(servo1, position);
+                if (state === 0) {
+                    position = 1;
+                    state = 1;
+                } else {
+                    position = 0;
+                    state = 0;
+                }
             });
 
             //console.log('UID:', card.uid.toString('hex'));
